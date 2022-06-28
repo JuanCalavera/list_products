@@ -22,8 +22,9 @@ Route::prefix('lista')->group(function (){
     Route::post('/add', [ListProductsController::class, 'create']);
     Route::get('/{listProducts}', [ListProductsController::class, 'show']);
     Route::post('/atualizar/{listProducts}', [ListProductsController::class, 'update']);
-    Route::get('/deletar/{listProducts}', [ListProductsController::class, 'destroy']);
-    // Route::post('/duplicate/{listProducts}', []);
+    Route::post('{listProducts}/adicionar-produto/', [ListProductsController::class, 'addProduct']);
+    Route::delete('/deletar/{listProducts}', [ListProductsController::class, 'destroy']);
+    Route::get('/duplicar/{listProducts}', [ListProductsController::class, 'duplicateList']);
 });
 
 Route::prefix('produtos')->group(function (){
@@ -31,5 +32,5 @@ Route::prefix('produtos')->group(function (){
     Route::post('/add', [ProductsController::class, 'create']);
     Route::post('/atualizar/{products}', [ProductsController::class, 'update']);
     Route::get('/{products}', [ProductsController::class, 'show']);
-    Route::get('/deletar/{products}', [ProductsController::class, 'destroy']);
+    Route::delete('/deletar/{products}', [ProductsController::class, 'destroy']);
 });

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ListProducts;
+use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class ListProductsController extends Controller
 {
@@ -15,11 +17,16 @@ class ListProductsController extends Controller
     public function index()
     {
         $lists = ListProducts::all();
-        foreach($lists as $list){
-            $allLists[] = [$list->toArray(), 'external_reference' => $list->products()->get()];
+        if (count($lists) != 0) {
+            foreach ($lists as $list) {
+                $allLists[] = [$list, 'external_reference' => $list->products()->get()];
+            }
+
+            return $allLists;
+        } else if(count($lists) == 0){
+            return Response::json(['message_error' => 'Você não possui listas cadastradas']);
         }
 
-        return json_encode($allLists);
     }
 
     /**
@@ -42,7 +49,10 @@ class ListProductsController extends Controller
      */
     public function show(ListProducts $listProducts)
     {
-        return $listProducts->toJson();
+        $products = $listProducts->products()->get();
+        // return [->toArray(), ->toArray()];
+        return Response::json(['list'=>$listProducts,'products'=>$products]);
+
     }
 
     /**
@@ -59,15 +69,15 @@ class ListProductsController extends Controller
             $oldName = $listProducts->title;
             $listProducts->title = $request->title;
             if ($listProducts->save()) {
-                return ['message' => "Alterado o título de {$oldName} para {$listProducts->title}"];
+                return Response::json(['message' => "Alterado o título de {$oldName} para {$listProducts->title}"]);
             } else {
-                return ['message' => "O título não pode ser alterado por favor tente novamente mais tarde"];
+                return Response::json(['message' => "O título não pode ser alterado por favor tente novamente mais tarde"]);
             }
         } else {
-            return ['message' => "O título informado é igual ao que já está cadastrado"];
+            return Response::json(['message' => "O título informado é igual ao que já está cadastrado"]);
         }
 
-        return ['message' => "O processo de atualização deu erro"];
+        return Response::json(['message' => "O processo de atualização deu erro"]);
     }
 
     /**
@@ -78,11 +88,55 @@ class ListProductsController extends Controller
      */
     public function destroy(ListProducts $listProducts)
     {
-        $oldName = $listProducts->title;
-        if ($listProducts->delete()) {
-            return ['message' => "Deletado a lista {$oldName}"];
-        } else {
-            return ['message' => "A lista não pode ser deletada por favor tente novamente mais tarde"];
+        if (isset($listProducts)) {
+            $oldName = $listProducts->title;
+            $products = $listProducts->products()->get();
+            foreach ($products as $product) {
+                $deleteProduct = $product->name_product;
+                if ($product->delete()) {
+                    $return[] = ['message_product' => "Deletado o produto {$deleteProduct}"];
+                } else {
+                    $return[] = ['message_product' => "Problemas ao deletar o produto {$deleteProduct}"];
+                }
+            }
+            if ($listProducts->delete()) {
+                return Response::json(['message_list' => "Deletado a lista {$oldName}", $return]);
+            } else {
+                return Response::json(['message_list' => "A lista não pode ser deletada por favor tente novamente mais tarde"]);
+            }
         }
+        return Response::json(['message_error' => "Nenhuma ação efetuada"]);
+    }
+
+    public function addProduct(ListProducts $listProducts, Request $request)
+    {
+        return Products::create([
+            'name_product' => $request->name_product,
+            'quantity_product' => $request->quantity_product,
+            'list_id' => $listProducts->id,
+        ]);
+    }
+
+    public function duplicateList(ListProducts $listProducts)
+    {
+        $newList = ListProducts::create([
+            'title' => $listProducts->title,
+        ]);
+
+        if (isset($newList)) {
+            $products = $listProducts->products()->get();
+
+            foreach ($products as $product) {
+                $newProducts[] = Products::create([
+                    'name_product' => $product->name_product,
+                    'quantity_product' => $product->quantity_product,
+                    'list_id' => $newList->id,
+                ]);
+            }
+            return Response::json([$newList, $newProducts]);
+        } elseif (!isset($newList)) {
+            return Response::json(['error_message' => 'Não foi encontrada a lista para ser duplicada']);
+        }
+        return Response::json(['error_message' => 'Nenhuma ação foi executada']);
     }
 }

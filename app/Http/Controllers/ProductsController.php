@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class ProductsController extends Controller
 {
@@ -15,11 +16,14 @@ class ProductsController extends Controller
     public function index()
     {
         $products = Products::all();
-        foreach($products as $product){
-            $allProducts[] = [$product->toArray(), 'external_reference' => $product->listProduct()->first()];
+        if (count($products) != 0) {
+            foreach ($products as $product) {
+                $allProducts[] = [$product, 'external_reference' => $product->listProduct()->first()];
+            }
+            return Response::json($allProducts);
+        } else if(count($products) == 0){
+            return Response::json(['message_error' => 'Você não possui produtos cadastrados']);
         }
-
-        return json_encode($allProducts);
     }
 
     /**
@@ -44,7 +48,7 @@ class ProductsController extends Controller
      */
     public function show(Products $products)
     {
-        return $products->toJson();
+        return Response::json([$products->toArray(), 'external_reference' => $products->listProduct()->first()->toArray()]);
     }
 
     /**
@@ -58,7 +62,7 @@ class ProductsController extends Controller
     {
         if (isset($request->name_product)) {
             if ($request->name_product != $products->name_product) {
-                $oldName = $request->name_product;
+                $oldName = $products->name_product;
                 $products->name_product = $request->name_product;
                 if ($products->save()) {
                     $return[] = ['name_message' => "O nome do produto foi atualizado de {$oldName} para {$products->name_product}"];
@@ -69,7 +73,7 @@ class ProductsController extends Controller
         }
         if (isset($request->quantity_product)) {
             if ($request->quantity_product != $products->quantity_product) {
-                $oldQuantity = $request->quantity_product;
+                $oldQuantity = $products->quantity_product;
                 $products->quantity_product = $request->quantity_product;
                 if ($products->save()) {
                     $return[] = ['quantity_message' => "A quantidade do produto foi atualizada de {$oldQuantity} para {$products->quantity_product}"];
@@ -79,10 +83,10 @@ class ProductsController extends Controller
             }
         }
 
-        if(!empty($return)){
-            return json_encode($return);
-        } else if(empty($return)){
-            return json_encode(['message' => 'Nada foi atualizado']);
+        if (!empty($return)) {
+            return Response::json($return);
+        } else if (empty($return)) {
+            return Response::json(['message' => 'Nada foi atualizado']);
         }
     }
 
@@ -94,6 +98,11 @@ class ProductsController extends Controller
      */
     public function destroy(Products $products)
     {
-        $products->delete();
+        $oldName = $products->name_product;
+        if ($products->delete()) {
+            return Response::json(['message' => "Deletado o produto {$oldName}"]);
+        } else {
+            return Response::json(['message' => "A lista não pode ser deletada por favor tente novamente mais tarde"]);
+        }
     }
 }

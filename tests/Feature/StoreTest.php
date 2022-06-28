@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\ListProducts;
+use App\Models\Products;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,9 +20,9 @@ class ExampleTest extends TestCase
     {
         $title = 'Compras da vovó';
 
-        if(ListProducts::create([
+        if (ListProducts::create([
             'title' => $title,
-        ])){
+        ])) {
             $json = [
                 'message' => 'Lista criada com suscesso',
             ];
@@ -59,7 +60,7 @@ class ExampleTest extends TestCase
         $list = 3;
         $listQuery = ListProducts::where('id', $list)->first();
         $name = $listQuery->title;
-        if($listQuery->delete()){
+        if ($listQuery->delete()) {
             $return = ['message' => "Deletada a Lista {$name}"];
         } else {
             $return = ['message' => "Não foi possível deletar a lista {$name}, verifique se o id foi inserido corretamente"];
@@ -68,4 +69,28 @@ class ExampleTest extends TestCase
         return json_encode($return);
     }
 
+    /** @test */
+    public function duplicate_list_via_route()
+    {
+        $listProducts = ListProducts::where('id', 5)->first();
+
+        $newList = ListProducts::create([
+            'title' => $listProducts->title,
+        ]);
+
+        if (isset($newList)) {
+            $products = $listProducts->products()->get();
+
+            foreach ($products as $product) {
+                $newProducts[] = Products::create([
+                    'name_product' => $product->name_product,
+                    'quantity_product' => $product->quantity_product,
+                    'list_id' => $newList->id,
+                ]);
+            }
+            return json_encode([$newList, $newProducts]);
+        } elseif (!isset($newList)) {
+            return json_encode(['error_message' => 'Não foi encontrada a lista para ser duplicada']);
+        }
+    }
 }
