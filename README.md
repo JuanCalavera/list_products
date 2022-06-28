@@ -1,4 +1,4 @@
-<p align="center"><img src="https://mail.google.com/mail/u/0/#m_1155186815556363492_" width="400"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/JuanCalavera/list_products/master/images/aztec-logo.png" width="400"></p>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
@@ -339,7 +339,7 @@ Resposta
 }
 ```
 
-<h2><a href="">Imagens com as requisições feitas</a></h2>
+<h2><a href="https://github.com/JuanCalavera/list_products/tree/master/images">Imagens com as requisições feitas</a></h2>
 
 # Testes Unitários Feitos
 Só inserir o terminal rodando na raiz do projeto.
