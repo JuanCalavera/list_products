@@ -1,64 +1,363 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><img src="https://mail.google.com/mail/u/0/#m_1155186815556363492_" width="400"></p>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<img src="https://img.shields.io/static/v1?label=version&message=1.0&color=informational"/>
+<img src="https://img.shields.io/static/v1?label=type&message=api&color=important"/>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Sobre o Projeto
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+O projeto é simplesmente uma api de lista de compras em PHP usando o framework Laravel. Onde você tem uma lista nomeada, e dentro de cada lista há seus respectivos produtos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+## Iniciando o Projeto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para iniciar a usar este projeto é necessário ter o composer instalado, e com ele instalado você insere o seguinte o comando em seu terminal na pasta raiz do seu projeto:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+composer install
+```
+Após isso você irá pegar o arquivo <b>.env.example</b> e renomeá-lo para <b>.env</b> e fará uma conexão com uma base de dados configurando ele:
 
-## Laravel Sponsors
+```
+DB_CONNECTION=<TIPO DE TABELA>
+DB_HOST=<HOST DA CONEXÃO>
+DB_PORT=<PORTA>
+DB_DATABASE=<NOME DA BASE DE DADOS>
+DB_USERNAME=<USUÁRIO DA CONEXÃO>
+DB_PASSWORD=<SENHA DA CONEXÃO>
+```
+E por último para que a base de dados esteja parametrizada ao projeto o camando a ser utilizado será:
+```
+php artisan migrate
+```
+## Usando o projeto
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Inicie o servidor do projeto pelo comando:
+```
+php artisan serve
+```
+Use qualquer software de sua preferência para fazer requisições nas rotas que forem mostradas aqui.
 
-### Premium Partners
+# Lista
+## Funções
+### Adicionar Lista
+Para iniciar nossa lista teremos que adiciona-lá pela url:
+```
+POST | http://127.0.0.1:8000/api/lista/add
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+{
+    title: TITULO_DA_LISTA
+}
+```
+Resposta:
+```
+{
+	"title": "Lista da Vovó",
+	"updated_at": "2022-06-28T13:48:25.000000Z",
+	"created_at": "2022-06-28T13:48:25.000000Z",
+	"id": 10
+}
+```
+### Verficar todas as listas
+```
+GET | http://127.0.0.1:8000/api/lista/
+```
+Resposta:
+```
+[
+	{
+		"0": {
+			"id": 10,
+			"title": "Lista da Mamãe",
+			"created_at": "2022-06-28T13:48:25.000000Z",
+			"updated_at": "2022-06-28T14:18:53.000000Z"
+		},
+		"external_reference": [
+			{
+				"id": 14,
+				"name_product": "Biscoito(não bolacha)",
+				"quantity_product": 2,
+				"list_id": 10,
+				"created_at": "2022-06-28T14:04:53.000000Z",
+				"updated_at": "2022-06-28T14:04:53.000000Z"
+			}
+		]
+	}
+]
+```
+Neste caso o <b>external_reference</b> retorna os produtos atrelados a lista.
+### Checar uma única lista
+Você pode buscar uma única lista pelo ID
 
-## Contributing
+```
+GET | http://127.0.0.1:8000/api/lista/$LIST_ID
+```
+Resposta
+```
+{
+	"list": {
+		"id": 10,
+		"title": "Lista da Vovó",
+		"created_at": "2022-06-28T13:48:25.000000Z",
+		"updated_at": "2022-06-28T13:48:25.000000Z"
+	},
+	"products": [
+		{
+			"id": 13,
+			"name_product": "Toddy",
+			"quantity_product": 2,
+			"list_id": 10,
+			"created_at": "2022-06-28T14:04:26.000000Z",
+			"updated_at": "2022-06-28T14:04:26.000000Z"
+		},
+		{
+			"id": 14,
+			"name_product": "Biscoito(não bolacha)",
+			"quantity_product": 2,
+			"list_id": 10,
+			"created_at": "2022-06-28T14:04:53.000000Z",
+			"updated_at": "2022-06-28T14:04:53.000000Z"
+		}
+	]
+}
+```
+Aqui ocorre a mesma coisa, ele retorna os produtos atrelados a lista.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Atualizar a lista
+```
+POST | http://127.0.0.1:8000/api/lista/atualizar/$LIST_ID
 
-## Code of Conduct
+{
+    title: TITULO_DA_LISTA
+}
+```
+Resposta
+```
+{
+	"message": "Alterado o título de Lista da Vovó para Lista da Mamãe"
+}
+```
+### Deletar Lista
+Quando se deleta uma lista você estará também deletando os produtos atrelados a ela, então cuidado ao usar essa deleção.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+DELETE | http://127.0.0.1:8000/api/lista/deletar/$LIST_ID
+```
+Resposta
+```
+{
+	"message_list": "Deletado a lista Lista da Vovó",
+	"0": [
+		{
+			"message_product": "Deletado o produto Kinder Ovo"
+		},
+		{
+			"message_product": "Deletado o produto Toddy"
+		}
+	]
+}
+```
+### Duplicar Lista
+Você pode duplicar uma lista com seus respectivos produtos.
+```
+GET | http://127.0.0.1:8000/api/lista/duplicar/$LIST_ID
+```
+Resposta
+```
+[
+	{
+		"title": "Lista da Vovó",
+		"updated_at": "2022-06-28T13:29:40.000000Z",
+		"created_at": "2022-06-28T13:29:40.000000Z",
+		"id": 8
+	},
+	[
+		{
+			"name_product": "Toddy",
+			"quantity_product": 2,
+			"list_id": 8,
+			"updated_at": "2022-06-28T13:29:40.000000Z",
+			"created_at": "2022-06-28T13:29:40.000000Z",
+			"id": 9
+		},
+		{
+			"name_product": "Kinder Ovo",
+			"quantity_product": 1,
+			"list_id": 8,
+			"updated_at": "2022-06-28T13:29:40.000000Z",
+			"created_at": "2022-06-28T13:29:40.000000Z",
+			"id": 10
+		}
+	]
+]
+```
+# Produtos
 
-## Security Vulnerabilities
+### Criar produtos a partir de uma lista
+Neste caso em específico é possível inserir um produto diretamente a lista usando a rota da lista:
+```
+POST | http://127.0.0.1:8000/api/lista/$LIST_ID/adicionar-produto/
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+{
+    "name_product": NOME_DO_PRODUTO,
+	"quantity_product": QUANTIDADE_DO_PRODUTO,
+}
+```
+Resposta
+```
+{
+	"name_product": "Biscoito(não bolacha)",
+	"quantity_product": "2",
+	"list_id": 10,
+	"updated_at": "2022-06-28T14:04:53.000000Z",
+	"created_at": "2022-06-28T14:04:53.000000Z",
+	"id": 14
+}
+```
+Outra maneira é criar por outra rota mas especificando o id da lista nas requisições
+```
+POST | http://127.0.0.1:8000/api/produtos/add
 
-## License
+{
+    "name_product": NOME_DO_PRODUTO,
+	"quantity_product": QUANTIDADE_DO_PRODUTO,
+	"list_id": ID_DA_LISTA
+}
+```
+Resposta
+```
+{
+	"name_product": "Energético",
+	"quantity_product": "40",
+	"list_id": "5",
+	"updated_at": "2022-06-28T21:43:08.000000Z",
+	"created_at": "2022-06-28T21:43:08.000000Z",
+	"id": 15
+}
+```
+### Listar todos os produtos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+GET | http://127.0.0.1:8000/api/produtos/
+```
+Resposta
+```
+[
+	{
+		"0": {
+			"id": 13,
+			"name_product": "Toddy",
+			"quantity_product": 2,
+			"list_id": 10,
+			"created_at": "2022-06-28T14:04:26.000000Z",
+			"updated_at": "2022-06-28T14:04:26.000000Z"
+		},
+		"external_reference": {
+			"id": 10,
+			"title": "Lista da Mamãe",
+			"created_at": "2022-06-28T13:48:25.000000Z",
+			"updated_at": "2022-06-28T14:18:53.000000Z"
+		}
+	},
+	{
+		"0": {
+			"id": 14,
+			"name_product": "Biscoito(não bolacha)",
+			"quantity_product": 2,
+			"list_id": 10,
+			"created_at": "2022-06-28T14:04:53.000000Z",
+			"updated_at": "2022-06-28T14:04:53.000000Z"
+		},
+		"external_reference": {
+			"id": 10,
+			"title": "Lista da Mamãe",
+			"created_at": "2022-06-28T13:48:25.000000Z",
+			"updated_at": "2022-06-28T14:18:53.000000Z"
+		}
+	}
+]
+```
+Veja que como na lista aqui temos o <b>external_reference</b> que aqui nos produtos ele indica a qual lista ele pertence.
+
+### Buscando um produto por ID
+
+```
+GET | http://127.0.0.1:8000/api/produtos/$PRODUCT_ID
+```
+Resposta
+```
+{
+	"0": {
+		"id": 13,
+		"name_product": "Toddy",
+		"quantity_product": 2,
+		"list_id": 10,
+		"created_at": "2022-06-28T14:04:26.000000Z",
+		"updated_at": "2022-06-28T14:04:26.000000Z"
+	},
+	"external_reference": {
+		"id": 10,
+		"title": "Lista da Mamãe",
+		"created_at": "2022-06-28T13:48:25.000000Z",
+		"updated_at": "2022-06-28T14:18:53.000000Z"
+	}
+}
+```
+### Atualizar Produto
+```
+POST | http://127.0.0.1:8000/api/produtos/atualizar/$PRODUCT_ID
+
+{
+    name_product: NOME_DO_PRODUTO,
+    quantity_product: QUANTIDADE_DO_PRODUTO
+}
+```
+Não necessariamente precisa ter simultaneamente ter as duas requisições e sim inserir só aquela a qual queira alterar em seu produto.
+
+Resposta
+```
+[
+	{
+		"name_message": "O nome do produto foi atualizado de Biscoito(não bolacha) para Nescau"
+	},
+	{
+		"quantity_message": "A quantidade do produto foi atualizada de 2 para 4"
+	}
+]
+```
+### Deletar Produto
+
+```
+DELETE | http://127.0.0.1:8000/api/produtos/deletar/$PRODUCT_ID
+```
+Resposta
+```
+{
+	"message": "Deletado o produto Toddy"
+}
+```
+
+<h2><a href="">Imagens com as requisições feitas</a></h2>
+
+# Testes Unitários Feitos
+Só inserir o terminal rodando na raiz do projeto.
+```
+vendor/bin/phpunit --filter duplicate_list_via_route
+```
+```
+vendor/bin/phpunit --filter delete_in_db_by_id
+```
+```
+vendor/bin/phpunit --filter creation_list_in_base_db  
+```
+```
+vendor/bin/phpunit --filter update_list_by_id 
+```
+```
+vendor/bin/phpunit --filter list_all_in_db
+```
+```
+vendor/bin/phpunit --filter list_all_in_db
+```
