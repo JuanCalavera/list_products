@@ -18,7 +18,7 @@ class ProductsController extends Controller
         $products = Products::all();
         if (count($products) != 0) {
             foreach ($products as $product) {
-                $allProducts[] = [$product, 'external_reference' => $product->listProduct()->first()];
+                $allProducts['lists'][] = ['list' => $product, 'external_reference' => $product->listProduct()->first()];
             }
             return Response::json($allProducts);
         } else if(count($products) == 0){
@@ -48,7 +48,7 @@ class ProductsController extends Controller
      */
     public function show(Products $products)
     {
-        return Response::json([$products->toArray(), 'external_reference' => $products->listProduct()->first()->toArray()]);
+        return Response::json(['product' => $products->toArray(), 'external_reference' => $products->listProduct()->first()->toArray()]);
     }
 
     /**
@@ -84,7 +84,7 @@ class ProductsController extends Controller
         }
 
         if (!empty($return)) {
-            return Response::json($return);
+            return Response::json(['messages' => $return]);
         } else if (empty($return)) {
             return Response::json(['message' => 'Nada foi atualizado']);
         }

@@ -19,10 +19,10 @@ class ListProductsController extends Controller
         $lists = ListProducts::all();
         if (count($lists) != 0) {
             foreach ($lists as $list) {
-                $allLists[] = [$list, 'external_reference' => $list->products()->get()];
+                $allLists['lists'][] = ['list' => $list, 'external_reference' => $list->products()->get()];
             }
 
-            return $allLists;
+            return Response::json($allLists);
         } else if(count($lists) == 0){
             return Response::json(['message_error' => 'Você não possui listas cadastradas']);
         }
@@ -100,7 +100,7 @@ class ListProductsController extends Controller
                 }
             }
             if ($listProducts->delete()) {
-                return Response::json(['message_list' => "Deletado a lista {$oldName}", $return]);
+                return Response::json(['message_list' => "Deletado a lista {$oldName}", 'products_deleted' => $return]);
             } else {
                 return Response::json(['message_list' => "A lista não pode ser deletada por favor tente novamente mais tarde"]);
             }
@@ -133,7 +133,7 @@ class ListProductsController extends Controller
                     'list_id' => $newList->id,
                 ]);
             }
-            return Response::json([$newList, $newProducts]);
+            return Response::json(['new_list' => $newList, 'new_products' => $newProducts]);
         } elseif (!isset($newList)) {
             return Response::json(['error_message' => 'Não foi encontrada a lista para ser duplicada']);
         }

@@ -41,7 +41,6 @@ php artisan serve
 Use qualquer software de sua preferência para fazer requisições nas rotas que forem mostradas aqui.
 
 # Lista
-## Funções
 ### Adicionar Lista
 Para iniciar nossa lista teremos que adiciona-lá pela url:
 ```
@@ -66,26 +65,28 @@ GET | http://127.0.0.1:8000/api/lista/
 ```
 Resposta:
 ```
-[
-	{
-		"0": {
-			"id": 10,
-			"title": "Lista da Mamãe",
-			"created_at": "2022-06-28T13:48:25.000000Z",
-			"updated_at": "2022-06-28T14:18:53.000000Z"
-		},
-		"external_reference": [
-			{
-				"id": 14,
-				"name_product": "Biscoito(não bolacha)",
-				"quantity_product": 2,
-				"list_id": 10,
-				"created_at": "2022-06-28T14:04:53.000000Z",
-				"updated_at": "2022-06-28T14:04:53.000000Z"
-			}
-		]
-	}
-]
+{
+	"lists": [
+		{
+			"list": {
+				"id": 10,
+				"title": "Lista da Mamãe",
+				"created_at": "2022-06-28T13:48:25.000000Z",
+				"updated_at": "2022-06-28T14:18:53.000000Z"
+			},
+			"external_reference": [
+				{
+					"id": 14,
+					"name_product": "Nescau",
+					"quantity_product": 4,
+					"list_id": 10,
+					"created_at": "2022-06-28T14:04:53.000000Z",
+					"updated_at": "2022-06-28T23:10:46.000000Z"
+				}
+			]
+		}
+	]
+}
 ```
 Neste caso o <b>external_reference</b> retorna os produtos atrelados a lista.
 ### Checar uma única lista
@@ -149,7 +150,7 @@ Resposta
 ```
 {
 	"message_list": "Deletado a lista Lista da Vovó",
-	"0": [
+	"products_deleted": [
 		{
 			"message_product": "Deletado o produto Kinder Ovo"
 		},
@@ -244,40 +245,37 @@ GET | http://127.0.0.1:8000/api/produtos/
 ```
 Resposta
 ```
-[
-	{
-		"0": {
-			"id": 13,
-			"name_product": "Toddy",
-			"quantity_product": 2,
-			"list_id": 10,
-			"created_at": "2022-06-28T14:04:26.000000Z",
-			"updated_at": "2022-06-28T14:04:26.000000Z"
+{
+	"lists": [
+		{
+			"list": {
+				"id": 14,
+				"name_product": "Nescau",
+				"quantity_product": 4,
+				"list_id": 10,
+				"created_at": "2022-06-28T14:04:53.000000Z",
+				"updated_at": "2022-06-28T23:10:46.000000Z"
+			},
+			"external_reference": {
+				"id": 10,
+				"title": "Lista da Mamãe",
+				"created_at": "2022-06-28T13:48:25.000000Z",
+				"updated_at": "2022-06-28T14:18:53.000000Z"
+			}
 		},
-		"external_reference": {
-			"id": 10,
-			"title": "Lista da Mamãe",
-			"created_at": "2022-06-28T13:48:25.000000Z",
-			"updated_at": "2022-06-28T14:18:53.000000Z"
+		{
+			"list": {
+				"id": 15,
+				"name_product": "Energético",
+				"quantity_product": 40,
+				"list_id": 5,
+				"created_at": "2022-06-28T21:43:08.000000Z",
+				"updated_at": "2022-06-28T21:43:08.000000Z"
+			},
+			"external_reference": null
 		}
-	},
-	{
-		"0": {
-			"id": 14,
-			"name_product": "Biscoito(não bolacha)",
-			"quantity_product": 2,
-			"list_id": 10,
-			"created_at": "2022-06-28T14:04:53.000000Z",
-			"updated_at": "2022-06-28T14:04:53.000000Z"
-		},
-		"external_reference": {
-			"id": 10,
-			"title": "Lista da Mamãe",
-			"created_at": "2022-06-28T13:48:25.000000Z",
-			"updated_at": "2022-06-28T14:18:53.000000Z"
-		}
-	}
-]
+	]
+}
 ```
 Veja que como na lista aqui temos o <b>external_reference</b> que aqui nos produtos ele indica a qual lista ele pertence.
 
@@ -289,13 +287,13 @@ GET | http://127.0.0.1:8000/api/produtos/$PRODUCT_ID
 Resposta
 ```
 {
-	"0": {
-		"id": 13,
-		"name_product": "Toddy",
-		"quantity_product": 2,
+	"product": {
+		"id": 14,
+		"name_product": "Nescau",
+		"quantity_product": 4,
 		"list_id": 10,
-		"created_at": "2022-06-28T14:04:26.000000Z",
-		"updated_at": "2022-06-28T14:04:26.000000Z"
+		"created_at": "2022-06-28T14:04:53.000000Z",
+		"updated_at": "2022-06-28T23:10:46.000000Z"
 	},
 	"external_reference": {
 		"id": 10,
@@ -318,14 +316,16 @@ Não necessariamente precisa ter simultaneamente ter as duas requisições e sim
 
 Resposta
 ```
-[
-	{
-		"name_message": "O nome do produto foi atualizado de Biscoito(não bolacha) para Nescau"
-	},
-	{
-		"quantity_message": "A quantidade do produto foi atualizada de 2 para 4"
-	}
-]
+{
+	"messages": [
+		{
+			"name_message": "O nome do produto foi atualizado de Nescau para Toddy"
+		},
+		{
+			"quantity_message": "A quantidade do produto foi atualizada de 4 para 2"
+		}
+	]
+}
 ```
 ### Deletar Produto
 
