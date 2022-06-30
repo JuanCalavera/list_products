@@ -21,7 +21,7 @@ class ProductsController extends Controller
                 $allProducts['lists'][] = ['list' => $product, 'external_reference' => $product->listProduct()->first()];
             }
             return Response::json($allProducts);
-        } else if(count($products) == 0){
+        } else if (count($products) == 0) {
             return Response::json(['message_error' => 'Você não possui produtos cadastrados']);
         }
     }
@@ -60,26 +60,23 @@ class ProductsController extends Controller
      */
     public function update(Request $request, Products $products)
     {
-        if (isset($request->name_product)) {
-            if ($request->name_product != $products->name_product) {
-                $oldName = $products->name_product;
-                $products->name_product = $request->name_product;
-                if ($products->save()) {
-                    $return[] = ['name_message' => "O nome do produto foi atualizado de {$oldName} para {$products->name_product}"];
-                } else {
-                    $return[] = ['name_message' => "Houve um erro ao atualizar o nome do produto"];
-                }
+        $oldName = $products->name_product;
+        $products->name_product = $request->name_product != $products->name_product && isset($request->name_product) ? $request->name_product : $products->name_product;
+        if ($products->name_product != $oldName) {
+            if ($products->save()) {
+                $return[] = ['name_message' => "O nome do produto foi atualizado de {$oldName} para {$products->name_product}"];
+            } else {
+                $return[] = ['name_message' => "Houve um erro ao atualizar o nome do produto"];
             }
         }
-        if (isset($request->quantity_product)) {
-            if ($request->quantity_product != $products->quantity_product) {
-                $oldQuantity = $products->quantity_product;
-                $products->quantity_product = $request->quantity_product;
-                if ($products->save()) {
-                    $return[] = ['quantity_message' => "A quantidade do produto foi atualizada de {$oldQuantity} para {$products->quantity_product}"];
-                } else {
-                    $return[] = ['quantity_message' => "Houve um erro ao atualizar a quantidade do produto"];
-                }
+
+        $oldQuantity = $products->quantity_product;
+        $products->quantity_product = $request->quantity_product != $products->quantity_product && isset($request->quantity_product) ? $request->quantity_product : $products->quantity_product;
+        if ($oldQuantity != $products->quantity_product) {
+            if ($products->save()) {
+                $return[] = ['quantity_message' => "A quantidade do produto foi atualizada de {$oldQuantity} para {$products->quantity_product}"];
+            } else {
+                $return[] = ['quantity_message' => "Houve um erro ao atualizar a quantidade do produto"];
             }
         }
 

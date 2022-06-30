@@ -23,10 +23,9 @@ class ListProductsController extends Controller
             }
 
             return Response::json($allLists);
-        } else if(count($lists) == 0){
+        } else if (count($lists) == 0) {
             return Response::json(['message_error' => 'Você não possui listas cadastradas']);
         }
-
     }
 
     /**
@@ -51,8 +50,7 @@ class ListProductsController extends Controller
     {
         $products = $listProducts->products()->get();
         // return [->toArray(), ->toArray()];
-        return Response::json(['list'=>$listProducts,'products'=>$products]);
-
+        return Response::json(['list' => $listProducts, 'products' => $products]);
     }
 
     /**
@@ -64,17 +62,16 @@ class ListProductsController extends Controller
      */
     public function update(Request $request, ListProducts $listProducts)
     {
-
-        if ($request->title != $listProducts->title) {
-            $oldName = $listProducts->title;
-            $listProducts->title = $request->title;
+        $oldName = $listProducts->title;
+        $listProducts->title = $request->title != $listProducts->title && isset($request->title) ? $request->title : $listProducts->title;
+        if ($listProducts->title != $oldName) {
             if ($listProducts->save()) {
                 return Response::json(['message' => "Alterado o título de {$oldName} para {$listProducts->title}"]);
             } else {
-                return Response::json(['message' => "O título não pode ser alterado por favor tente novamente mais tarde"]);
+                return Response::json(['message' => "O título não foi alterado por favor tente novamente mais tarde"]);
             }
-        } else {
-            return Response::json(['message' => "O título informado é igual ao que já está cadastrado"]);
+        } else if($listProducts->title == $oldName){
+            return Response::json(['message' => "Nada foi atualizado pois não foi encontrado atualizações"]);
         }
 
         return Response::json(['message' => "O processo de atualização deu erro"]);
